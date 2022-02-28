@@ -14,4 +14,9 @@ public class Rei extends ChessPiece {
 	public String toString() {
 		return "K";
 	}
+	
+	public boolean[][] movPossivel(){
+		boolean[][] mat = new boolean[getTabuleiro().getLinhas()][getTabuleiro().getColunas()];
+		return mat;
+	}
 }

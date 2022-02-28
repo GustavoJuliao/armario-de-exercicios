@@ -1,5 +1,6 @@
 package chess;
 
+import boardgame.Piece;
 import boardgame.Posicao;
 import boardgame.Tabuleiro;
 import chess.pieces.Rei;
@@ -24,12 +25,50 @@ public class ChessPartida {
 		}
 		return mat;
 	}
-
-	private void initialSetup() {
-		tabuleiro.placePiece(new Torre(tabuleiro, Cor.WHITE), new Posicao(2,1));
-		tabuleiro.placePiece(new Rei(tabuleiro, Cor.BLACK), new Posicao(0,4));
-		tabuleiro.placePiece(new Rei(tabuleiro, Cor.WHITE), new Posicao(7,4));
+	
+	public ChessPiece performChessMove(ChessPosicao posOrigem, ChessPosicao posDestino) {
+		Posicao origem = posOrigem.toPosicao();
+		Posicao destino = posDestino.toPosicao();
+		validarPosOrigem(origem);
+		Piece capturaPiece = fazerJogada(origem, destino);
+		return (ChessPiece)capturaPiece;
 	}
+	
+	private void validarPosOrigem(Posicao posicao) {
+		if(!tabuleiro.thereIsAPiece(posicao)) {
+			throw new ChessException("Nao existe posicao no local de origem.");
+		}
+		if(!tabuleiro.piece(posicao).isThereAnyPossibleMove()) throw new ChessException("Não existe movimento possivel para Peça escolhida.");
+	}
+	
+	private Piece fazerJogada(Posicao origem, Posicao destino) {
+		Piece p = tabuleiro.removePiece(origem);
+		Piece capturaPiece = tabuleiro.removePiece(destino);
+		tabuleiro.placePiece(p, destino);
+		return capturaPiece;
+	}
+	
+
+	private void placeNovoLugar(char coluna, int linha, ChessPiece piece) {
+		tabuleiro.placePiece(piece, new ChessPosicao(coluna, linha).toPosicao());
+	}
+	
+	private void initialSetup() {
+		placeNovoLugar('b', 6, new Torre(tabuleiro, Cor.WHITE));
+		placeNovoLugar('e', 8, new Rei(tabuleiro, Cor.BLACK));
+		placeNovoLugar('e', 1, new Rei(tabuleiro, Cor.WHITE));
+		placeNovoLugar('c', 1, new Torre(tabuleiro, Cor.WHITE));
+        placeNovoLugar('c', 2, new Torre(tabuleiro, Cor.WHITE));
+        placeNovoLugar('d', 2, new Torre(tabuleiro, Cor.WHITE));
+        placeNovoLugar('e', 2, new Torre(tabuleiro, Cor.WHITE));
+        placeNovoLugar('d', 1, new Rei(tabuleiro, Cor.WHITE));
+
+        placeNovoLugar('c', 7, new Torre(tabuleiro, Cor.BLACK));
+        placeNovoLugar('c', 8, new Torre(tabuleiro, Cor.BLACK));
+        placeNovoLugar('d', 7, new Torre(tabuleiro, Cor.BLACK));
+        placeNovoLugar('e', 7, new Torre(tabuleiro, Cor.BLACK));
+        placeNovoLugar('d', 8, new Rei(tabuleiro, Cor.BLACK));
+        }
 
 
 }

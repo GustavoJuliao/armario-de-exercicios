@@ -15,4 +15,8 @@ public class Torre extends ChessPiece{
 		return "T";
 	}
 
+	public boolean[][] movPossivel(){
+		boolean[][] mat = new boolean[getTabuleiro().getLinhas()][getTabuleiro().getColunas()];
+		return mat;
+	}
 }
