@@ -1,8 +1,12 @@
 package application;
 
+import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
+import chess.ChessPartida;
 import chess.ChessPiece;
 import chess.ChessPosicao;
 import chess.Cor;
@@ -42,26 +46,60 @@ public class UI {
 			int linha = Integer.parseInt(s.substring(1));
 			return new ChessPosicao(coluna,linha);
 		} catch (RuntimeException e) {
-			throw new InputMismatchException("Erro ao ler a ChessPosicao. Valores validos sao entre a1 e h8.");
+			throw new InputMismatchException("Erro ao ler a ChessPosicao. Valores validos sao entre A1 e H8.");
 		}
 	}
 	
 	
+	public static void printMatch(ChessPartida chessPartida, List<ChessPiece> captura) {
+		printBoard(chessPartida.getPieces());
+		System.out.println();
+		printCapturedPieces(captura);
+		System.out.println();
+		System.out.println("Turno : " + chessPartida.getTurno());
+		
+		if (!chessPartida.getCheckMate()) {
+			System.out.println("Esperando por jogador: " + chessPartida.getCurrentPlayer());
+			if (chessPartida.getCheck()) {
+				System.out.println("CHECK!");
+			}
+		}
+		else {
+			System.out.println("CHECKMATE!");
+			System.out.println("Ganhador: " + chessPartida.getCurrentPlayer());
+			}
+	}
 	
 	public static void printBoard(ChessPiece[][] pieces) {
 		for (int i = 0; i < pieces.length; i++) {
 			System.out.print((8 - i) + " ");
 			for (int j = 0; j < pieces.length; j++) {
-				printPiece(pieces[i][j]);
+				printPiece(pieces[i][j], false);
+			}
+			System.out.println();
+		}
+		System.out.print("  a b c d e f g h");
+	}
+	
+	public static void printBoard(ChessPiece[][] pieces, boolean[][] movPossivel) {
+		for (int i = 0; i < pieces.length; i++) {
+			System.out.print((8 - i) + " ");
+			for (int j = 0; j < pieces.length; j++) {
+				printPiece(pieces[i][j], movPossivel[i][j]);
 			}
 			System.out.println();
 		}
 		System.out.print("  a b c d e f g h");
 	}
 
-	private static void printPiece(ChessPiece piece) {
+	
+
+	private static void printPiece(ChessPiece piece, boolean background) {
+		if (background) {
+			System.out.print(ANSI_BLUE_BACKGROUND);
+		}
 		if (piece == null) {
-			System.out.print("-");
+			System.out.print("-" + ANSI_RESET);
 		} else {
 			if (piece.getCor() == Cor.WHITE) {
                 System.out.print(ANSI_WHITE + piece + ANSI_RESET);
@@ -72,5 +110,20 @@ public class UI {
 		}
 		System.out.print(" ");
 	}
-
+	
+	
+	private static void printCapturedPieces(List<ChessPiece> captured) {
+		List<ChessPiece> white = captured.stream().filter(x -> x.getCor() == Cor.WHITE).collect(Collectors.toList());
+		List<ChessPiece> black = captured.stream().filter(x -> x.getCor() == Cor.BLACK).collect(Collectors.toList());
+		System.out.println("Pecas capturadas:");
+		System.out.print("White: ");
+		System.out.print(ANSI_WHITE);
+		System.out.println(Arrays.toString(white.toArray()));
+		System.out.print(ANSI_RESET);
+		System.out.print("Black: ");
+		System.out.print(ANSI_YELLOW);
+		System.out.println(Arrays.toString(black.toArray()));
+		System.out.print(ANSI_RESET);
+	}
+	
 }

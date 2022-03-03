@@ -8,6 +8,7 @@ public abstract class Piece {
 
 	public Piece(Tabuleiro tabuleiro) {
 		this.tabuleiro = tabuleiro;
+		posicao = null;
 	}
 
 	protected Tabuleiro getTabuleiro() {
